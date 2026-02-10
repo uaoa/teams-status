@@ -27,12 +27,22 @@ jobs:
 
       - run: npm ci
 
+      - name: Check variables
+        run: |
+          echo "CLIENT_ID length: ${#VITE_CLIENT_ID}"
+          echo "TENANT_ID length: ${#VITE_TENANT_ID}"
+          echo "REDIRECT_URI: $VITE_REDIRECT_URI"
+        env:
+          VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID || secrets.VITE_CLIENT_ID }}
+          VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID || secrets.VITE_TENANT_ID }}
+          VITE_REDIRECT_URI: ${{ vars.VITE_REDIRECT_URI || secrets.VITE_REDIRECT_URI }}
+
       - run: npm run build
         env:
           GITHUB_PAGES: true
-          VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
-          VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
-          VITE_REDIRECT_URI: ${{ vars.VITE_REDIRECT_URI }}
+          VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID || secrets.VITE_CLIENT_ID }}
+          VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID || secrets.VITE_TENANT_ID }}
+          VITE_REDIRECT_URI: ${{ vars.VITE_REDIRECT_URI || secrets.VITE_REDIRECT_URI }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
