@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --teams-purple: #6264a7;
+  --teams-purple-dark: #464775;
+  --bg: #1b1b2f;
+  --bg-card: #252542;
+  --bg-hover: #2f2f52;
+  --text: #e8e8f0;
+  --text-muted: #9898b0;
+  --danger: #c4314b;
+  --radius: 12px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#root {
+  width: 100%;
+  max-width: 440px;
+  padding: 16px;
+}
