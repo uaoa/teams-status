@@ -20,7 +20,16 @@ const REFRESH_INTERVAL = 30_000;
 function StatusPanel() {
   const { instance, accounts } = useMsal();
   const [currentPresence, setCurrentPresence] = useState(null);
-  const [activeStatus, setActiveStatus] = useState(null);
+  const [activeStatus, setActiveStatus] = useState(() => {
+    const saved = localStorage.getItem("teams-locked-status");
+    if (!saved) return null;
+    try {
+      const { status, expiresAt } = JSON.parse(saved);
+      if (Date.now() < expiresAt) return status;
+      localStorage.removeItem("teams-locked-status");
+    } catch { /* ignore */ }
+    return null;
+  });
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -91,6 +100,10 @@ function StatusPanel() {
         "PT480M"
       );
       setActiveStatus(status.id);
+      localStorage.setItem("teams-locked-status", JSON.stringify({
+        status: status.id,
+        expiresAt: Date.now() + 8 * 60 * 60 * 1000,
+      }));
       await fetchPresence();
     } catch (err) {
       console.error("Failed to set presence:", err);
@@ -107,6 +120,7 @@ function StatusPanel() {
       const token = await getAccessToken();
       await clearUserPreferredPresence(token);
       setActiveStatus(null);
+      localStorage.removeItem("teams-locked-status");
       await fetchPresence();
     } catch (err) {
       console.error("Failed to clear presence:", err);
