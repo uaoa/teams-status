@@ -6,10 +6,14 @@ export const msalConfig = {
     authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID || "common"}`,
     redirectUri: import.meta.env.VITE_REDIRECT_URI || baseUrl,
     postLogoutRedirectUri: import.meta.env.VITE_REDIRECT_URI || baseUrl,
+    navigateToLoginRequestUrl: false,
   },
   cache: {
     cacheLocation: "localStorage",
     storeAuthStateInCookie: false,
+  },
+  system: {
+    allowRedirectInIframe: true,
   },
 };
 

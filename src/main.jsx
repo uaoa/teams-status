@@ -8,17 +8,24 @@ import "./index.css";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
-msalInstance.initialize().then(() => {
-  msalInstance.handleRedirectPromise().then((response) => {
+async function start() {
+  await msalInstance.initialize();
+
+  // Handle the redirect/popup response (including hash-based responses)
+  try {
+    const response = await msalInstance.handleRedirectPromise();
     if (response) {
       msalInstance.setActiveAccount(response.account);
-    } else {
-      const accounts = msalInstance.getAllAccounts();
-      if (accounts.length > 0) {
-        msalInstance.setActiveAccount(accounts[0]);
-      }
     }
-  });
+  } catch (err) {
+    console.error("handleRedirectPromise error:", err);
+  }
+
+  // Set active account if already logged in
+  const accounts = msalInstance.getAllAccounts();
+  if (!msalInstance.getActiveAccount() && accounts.length > 0) {
+    msalInstance.setActiveAccount(accounts[0]);
+  }
 
   msalInstance.addEventCallback((event) => {
     if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
@@ -33,4 +40,6 @@ msalInstance.initialize().then(() => {
       </MsalProvider>
     </StrictMode>
   );
-});
+}
+
+start();
