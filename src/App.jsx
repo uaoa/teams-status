@@ -34,8 +34,8 @@ function StatusPanel() {
       return response.accessToken;
     } catch (err) {
       if (err instanceof InteractionRequiredAuthError) {
-        const response = await instance.acquireTokenPopup(request);
-        return response.accessToken;
+        await instance.acquireTokenRedirect(request);
+        return null;
       }
       throw err;
     }
@@ -117,7 +117,7 @@ function StatusPanel() {
   };
 
   const handleLogout = () => {
-    instance.logoutPopup();
+    instance.logoutRedirect();
   };
 
   const currentStatusColor =
@@ -198,15 +198,12 @@ function LoginScreen() {
   const { instance } = useMsal();
   const [loggingIn, setLoggingIn] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     setLoggingIn(true);
-    try {
-      await instance.loginPopup(loginRequest);
-    } catch (err) {
+    instance.loginRedirect(loginRequest).catch((err) => {
       console.error("Login failed:", err);
-    } finally {
       setLoggingIn(false);
-    }
+    });
   };
 
   return (
